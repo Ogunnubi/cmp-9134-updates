@@ -1,0 +1,25 @@
+.logo-container {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+.logo-image {
+  width: 150px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 640px) {
+  .logo-image {
+    width: 50px;
+  }
+  .background{
+    margin: 0 5px;
+  }
+}
+
+body{
+    background: #5B566A;
+}
