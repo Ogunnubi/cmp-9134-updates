@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { FcGoogle } from "react-icons/fc";
 
 export default function AuthForm() {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -17,12 +18,13 @@ export default function AuthForm() {
 
     const res = await signIn('credentials', {
       redirect: false,
+      username,
       email,
       password,
     });
 
     if (res?.ok) {
-      router.push('/dashboard');
+      router.push('/login-page');
     } else {
       alert('Invalid credentials');
     }
@@ -34,6 +36,14 @@ export default function AuthForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-10 w-full max-w-sm mx-auto">
+      <input
+        type="username"
+        value={username}
+        placeholder="username"
+        onChange={(e) => setUsername(e.target.value)}
+        className="p-2 border rounded bg-[#2E3E54] placeholder:text-[white] text-[white] cursor-pointer"
+        required
+      />
       <input
         type="email"
         value={email}
@@ -55,7 +65,7 @@ export default function AuthForm() {
         className="bg-[#5B769C] text-white p-2 rounded cursor-pointer"
         disabled={isSubmitting}
       >
-        Sign In
+        Sign Up
       </button>
 
       <button
