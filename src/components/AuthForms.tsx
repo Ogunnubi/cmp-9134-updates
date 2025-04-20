@@ -1,80 +1,60 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { FcGoogle } from "react-icons/fc";
+import { useRouter } from 'next/navigation'; // Use next/navigation instead of next/router
+import { signup } from '@/services/auth.service';
+import { useAuthStore } from '@/store/auth-store';
 
 export default function AuthForm() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const router = useRouter();
+  const setToken = useAuthStore((state) => state.setToken);
+  const router = useRouter(); // Updated to use next/navigation
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
-    const res = await signIn('credentials', {
-      redirect: false,
-      username,
-      email,
-      password,
-    });
-
-    if (res?.ok) {
-      router.push('/login-page');
-    } else {
-      alert('Invalid credentials');
+    try {
+      const { user } = await signup(username, email, password);
+      alert('Signup successful. You can now login.');
+      router.push('/login'); // Redirect using next/navigation
+    } catch (err: any) {
+      console.error(err);
+      const message = err?.response?.data?.message;
+    
+      if (Array.isArray(message)) {
+        alert(message.join('\n')); // Show all validation errors
+      } else {
+        alert(message || 'Signup failed'); // Show single message or fallback
+      }
     }
-
-    setIsSubmitting(false);
   };
 
-  const handleGoogleLogin = () => signIn('google', { callbackUrl: '/dashboard' });
-
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-10 w-full max-w-sm mx-auto">
+    <form onSubmit={handleSubmit}>
+      <h2>Signup</h2>
       <input
-        type="username"
+        type="text"
+        placeholder="Username"
         value={username}
-        placeholder="username"
         onChange={(e) => setUsername(e.target.value)}
-        className="p-2 border rounded bg-[#2E3E54] placeholder:text-[white] text-[white] cursor-pointer"
         required
       />
       <input
         type="email"
-        value={email}
         placeholder="Email"
+        value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="p-2 border rounded bg-[#2E3E54] placeholder:text-[white] text-[white] cursor-pointer"
         required
       />
       <input
         type="password"
-        value={password}
         placeholder="Password"
+        value={password}
         onChange={(e) => setPassword(e.target.value)}
-        className="p-2 border rounded bg-[#2E3E54] placeholder:text-[white] text-[white] cursor-pointer"
         required
       />
-      <button
-        type="submit"
-        className="bg-[#5B769C] text-white p-2 rounded cursor-pointer"
-        disabled={isSubmitting}
-      >
-        Sign Up
-      </button>
-
-      <button
-        type="button"
-        className="flex justify-center text-center align-center text-white p-2 rounded cursor-pointer border border-2-#597692"
-        onClick={handleGoogleLogin}
-      >
-    <span className='mr-3 mt-1 flex align-center justify-center'><FcGoogle /></span>Google
-      </button>
+      <button type="submit">Sign Up</button>
     </form>
   );
 }

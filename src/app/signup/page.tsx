@@ -1,6 +1,6 @@
+import AuthForm from "@/components/AuthForms";
 import Image from "next/image";
 import mountains from "../../../public/register-img.jpg";
-import AuthForm from "@/components/AuthForms";
 export default function SignUp() {
   return (
     <>
@@ -13,6 +13,7 @@ export default function SignUp() {
       </h1>
       <AuthForm />
     </div>
+    <p>Already have an account? <a href="/login">Login here</a></p>
     </>
   );
 }
