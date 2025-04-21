@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import SearchBar from "@/components/search-bar";
 import { searchMedia } from "@/utils/api";
+import Image from "next/image";
+import logo from "../../../public/openverse_logo.png";
 
 export default function DashBoard() {
   const [images, setImages] = useState([]);
@@ -12,7 +14,6 @@ export default function DashBoard() {
   const itemsPerPage = 6; // Pagination limit
   const [userEmail, setUserEmail] = useState(""); // State for user email
   const [username, setUsername] = useState("");
-
 
   // Load history from localStorage on mount
   useEffect(() => {
@@ -66,7 +67,6 @@ export default function DashBoard() {
     localStorage.removeItem("mediaSearchHistory");
     window.location.href = "/login";
   };
-  
 
   const paginatedItems = (items: any[]) => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -76,144 +76,167 @@ export default function DashBoard() {
   const totalPages = (items: any[]) => Math.ceil(items.length / itemsPerPage);
 
   return (
-    <main className="p-6 max-w-6xl mx-auto">
-      {/* Top Navigation */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-white">Welcome,   {username || "Loading..."}
-        </h1>
-        <div className="flex flex-col items-center gap-1">
-          <span className="text-white">  {userEmail || "Loading..."}
-          </span>
-          <button
-            onClick={handleLogout}
-            className="text-md text-[#02F7FD] underline cursor-pointer"
-          >
-            Logout
-          </button>
-        </div>
-      </div>
-
-      {/* Search Bar */}
-      <SearchBar onSearch={handleSearch} />
-
-      {/* Filter Tabs */}
-      <div className="flex gap-4 mt-4 border-b border-gray-300">
-        {["all", "images", "audio"].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setFilter(tab)}
-            className={`px-4 py-2 ${
-              filter === tab ? "border-b-2 border-[#02F7FD] text-[#02F7FD]" : "text-white"
-            }`}
-          >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
-          </button>
-        ))}
-      </div>
-
-      {/* Search History */}
-      {history.length > 0 && (
-        <div className="mt-6">
-          <h2 className="text-lg font-semibold mb-2 text-white">Search History</h2>
-          <div className="flex flex-wrap gap-2">
-            {history.map((term) => (
-              <div
-                key={term}
-                className="flex items-center bg-gray-200 px-3 py-1 rounded-full"
-              >
-                <button onClick={() => handleSearch(term)}>{term}</button>
-                <button
-                  onClick={() => handleDeleteHistory(term)}
-                  className="ml-2 text-red-600 hover:text-red-800 cursor-pointer font-bold"
-                >
-                  &times;
-                </button>
-              </div>
-            ))}
+    <>
+      <main className="p-6 max-w-6xl mx-auto">
+        {/* Top Navigation */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-[#474948]"></h1>
+          <div className="flex  items-center gap-1">
+            <span className="text-[#474948] mr-4 text-2xl">
+              {" "}
+              Welcome, {username || "Loading..."}
+            </span>
+            <button
+              onClick={handleLogout}
+              className="text-md text-[#2469A6] underline cursor-pointer"
+            >
+              Logout
+            </button>
           </div>
-          <button
-            onClick={clearAllHistory}
-            className="mt-2 text-md text-[#02F7FD] underline cursor-pointer"
-          >
-            Clear All
-          </button>
         </div>
-      )}
+        <div className="logo-container flex justify-center items-center px-2 py-1 my-5 bg-[white]">
+          <Image
+            src={logo}
+            alt="Openverse Logo"
+            className="logo-image rounded-full shadow-lg"
+          />
+        </div>
 
-      {/* Results */}
-      <div className="mt-6">
-        {filter !== "audio" && (
-          <>
-            <h2 className="text-xl font-bold mb-2 text-white">Images</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {paginatedItems(images).length > 0 ? (
-                paginatedItems(images).map((media: any) => (
-                  <div
-                    key={media.id}
-                    className="border border-[white] rounded shadow hover:shadow-lg transition"
+        {/* Search Bar */}
+        <SearchBar onSearch={handleSearch} />
+
+        {/* Filter Tabs */}
+        <div className="flex gap-4 mt-4 border-b border-gray-300">
+          {["all", "images", "audio"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setFilter(tab)}
+              className={`px-4 py-2 ${
+                filter === tab
+                  ? "border-b-2 border-[#2469A6] text-[#2469A6]"
+                  : "text-[#474948]"
+              }`}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
+        </div>
+
+        {/* Search History */}
+        {history.length > 0 && (
+          <div className="mt-6">
+            <h2 className="text-lg font-semibold mb-2 text-[#474948]">
+              Search History
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {history.map((term) => (
+                <div
+                  key={term}
+                  className="flex items-center bg-gray-200 px-3 py-1 rounded-full"
+                >
+                  <button onClick={() => handleSearch(term)}>{term}</button>
+                  <button
+                    onClick={() => handleDeleteHistory(term)}
+                    className="ml-2 text-red-600 hover:text-red-800 cursor-pointer font-bold"
                   >
-                    <img
-                      src={media.thumbnail}
-                      alt={media.title}
-                      className="w-full h-32 sm:h-48 object-cover"
-                    />
-                    <div className="p-2">
-                      <p className="font-semibold text-white text-sm sm:text-base">
-                        {media.title || "Untitled"}
-                      </p>
-                      <a
-                        href={media.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs sm:text-sm underline text-white"
-                      >
-                        View Source
-                      </a>
+                    &times;
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={clearAllHistory}
+              className="mt-2 text-md text-[#2469A6] underline cursor-pointer"
+            >
+              Clear All
+            </button>
+          </div>
+        )}
+
+        {/* Results */}
+        <div className="mt-6">
+          {filter !== "audio" && (
+            <>
+              <h2 className="text-xl font-bold mb-2 text-[#474948]">Images</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {paginatedItems(images).length > 0 ? (
+                  paginatedItems(images).map((media: any) => (
+                    <div
+                      key={media.id}
+                      className="border border-[[#474948]] rounded shadow hover:shadow-lg transition"
+                    >
+                      <img
+                        src={media.thumbnail}
+                        alt={media.title}
+                        className="w-full h-32 sm:h-48 object-cover"
+                      />
+                      <div className="p-2">
+                        <p className="font-semibold text-[#474948] text-sm sm:text-base">
+                          {media.title || "Untitled"}
+                        </p>
+                        <a
+                          href={media.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs sm:text-sm underline text-[#474948]"
+                        >
+                          View Source
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-white">No images found.</p>
-              )}
-            </div>
-          </>
-        )}
+                  ))
+                ) : (
+                  <p className="text-[#474948]">No images found.</p>
+                )}
+              </div>
+            </>
+          )}
 
-        {filter !== "images" && (
-          <>
-            <h2 className="text-xl font-bold mb-2 text-white">Audio</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {paginatedItems(audio).length > 0 ? (
-                paginatedItems(audio).map((track: any) => (
-                  <div key={track.id} className="text-center">
-                    <p className="font-medium text-white text-sm sm:text-base">
-                      {track.title}
-                    </p>
-                    <audio controls src={track.url} className="w-full"></audio>
-                  </div>
-                ))
-              ) : (
-                <p className="text-white">No audio found.</p>
-              )}
-            </div>
-          </>
-        )}
-      </div>
+          {filter !== "images" && (
+            <>
+              <h2 className="text-xl font-bold mb-2 text-[#474948]">Audio</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {paginatedItems(audio).length > 0 ? (
+                  paginatedItems(audio).map((track: any) => (
+                    <div key={track.id} className="text-center">
+                      <p className="font-medium text-[#474948] text-sm sm:text-base">
+                        {track.title}
+                      </p>
+                      <audio
+                        controls
+                        src={track.url}
+                        className="w-full"
+                      ></audio>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-[#474948]">No audio found.</p>
+                )}
+              </div>
+            </>
+          )}
+        </div>
 
-      {/* Pagination */}
-      <div className="flex justify-center mt-6">
-        {Array.from({ length: totalPages(filter === "images" ? images : audio) }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(i + 1)}
-            className={`px-3 py-1 mx-1 ${
-              currentPage === i + 1 ? "bg-[#02F7FD] text-white" : "bg-gray-300"
-            } rounded`}
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div>
-    </main>
+        {/* Pagination */}
+        <div className="flex justify-center mt-6">
+          {Array.from(
+            { length: totalPages(filter === "images" ? images : audio) },
+            (_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`px-3 py-1 mx-1 ${
+                  currentPage === i + 1
+                    ? "bg-[#2469A6] text-[#474948]"
+                    : "bg-gray-300"
+                } rounded`}
+              >
+                {i + 1}
+              </button>
+            )
+          )}
+        </div>
+      </main>
+    </>
   );
 }

@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./layout.css"; // Import a new CSS file for layout-specific styles
-import Image from "next/image";
-import logo from "../../public/openverse_logo.png"
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,9 +29,6 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-       <div className="logo-container flex justify-center items-center px-2 py-1">
-          <Image src={logo} alt="Openverse Logo" className="logo-image rounded-full shadow-lg" />
-        </div>
         {children}
       </body>
     </html>
