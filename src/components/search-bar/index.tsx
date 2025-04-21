@@ -23,7 +23,7 @@ export default function SearchBar({ onSearch }: { onSearch: (query: string) => v
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search for media..."
-        className="w-full px-4 py-2 border-1 text-white placeholder:text-white border-[#02F7FD] rounded focus:outline-none focus:ring-2 focus:ring-[#02F7FD]"
+        className="w-full px-4 py-2 border-1 text-white placeholder:text-white border-[#02F7FD]  focus:outline-none focus:ring-2 focus:ring-[#02F7FD] rounded-4xl"
       />
       {query && (
         <button
@@ -35,7 +35,7 @@ export default function SearchBar({ onSearch }: { onSearch: (query: string) => v
       )}
       <button
         onClick={handleSearch}
-        className="mt-2 w-full bg-[#02F7FD] text-white py-2 rounded hover:bg-[#02D6E0] transition flex items-center justify-center"
+        className="mt-2 w-full bg-[#2372AB] text-white py-2 text-bold rounded hover:bg-[#02D6E0] transition flex items-center justify-center"
         disabled={isLoading}
       >
         {isLoading ? (

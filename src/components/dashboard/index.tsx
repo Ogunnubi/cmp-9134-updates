@@ -11,6 +11,8 @@ export default function DashBoard() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6; // Pagination limit
   const [userEmail, setUserEmail] = useState(""); // State for user email
+  const [username, setUsername] = useState("");
+
 
   // Load history from localStorage on mount
   useEffect(() => {
@@ -21,10 +23,12 @@ export default function DashBoard() {
   }, []);
 
   useEffect(() => {
-    // Simulate fetching user email after login
     const email = localStorage.getItem("userEmail"); // Assume email is stored in localStorage
     if (email) {
       setUserEmail(email);
+      const namePart = email.split("@")[0];
+      setUsername(namePart);
+      localStorage.setItem("username", namePart); // Optional: store in localStorage
     }
   }, []);
 
@@ -57,9 +61,12 @@ export default function DashBoard() {
   };
 
   const handleLogout = () => {
-    // Implement logout functionality
-    console.log("User logged out");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("username"); // ✅ Important
+    localStorage.removeItem("mediaSearchHistory");
+    window.location.href = "/login";
   };
+  
 
   const paginatedItems = (items: any[]) => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -72,9 +79,11 @@ export default function DashBoard() {
     <main className="p-6 max-w-6xl mx-auto">
       {/* Top Navigation */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-white">Welcome To Openverse Search</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-white">{userEmail || "Loading..."}</span>
+        <h1 className="text-2xl font-bold text-white">Welcome,   {username || "Loading..."}
+        </h1>
+        <div className="flex flex-col items-center gap-1">
+          <span className="text-white">  {userEmail || "Loading..."}
+          </span>
           <button
             onClick={handleLogout}
             className="text-md text-[#02F7FD] underline cursor-pointer"
