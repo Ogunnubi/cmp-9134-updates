@@ -25,12 +25,38 @@ export default function LoginPage() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Login</h2>
-      <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-      <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      <button type="submit">Login</button>
-      <p>Don't have an account? <a href="/signup">Sign up here</a></p>
-    </form>
+    <div className="flex justify-center items-center min-h-[83vh] bg-gray-100">
+      <form 
+        onSubmit={handleSubmit} 
+        className="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center"
+      >
+        <h2 className="mb-6 text-2xl font-semibold text-gray-800">Login</h2>
+        <input 
+          type="email" 
+          placeholder="Email" 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+          required 
+          className="w-full p-3 mb-4 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <input 
+          type="password" 
+          placeholder="Password" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+          required 
+          className="w-full p-3 mb-6 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button 
+          type="submit" 
+          className="w-full p-3 bg-blue-500 text-white rounded-lg text-base font-medium hover:bg-blue-600 transition"
+        >
+          Login
+        </button>
+        <p className="mt-4 text-gray-600">
+          Don't have an account? <a href="/signup" className="text-blue-500 hover:underline">Sign up here</a>
+        </p>
+      </form>
+    </div>
   );
 }

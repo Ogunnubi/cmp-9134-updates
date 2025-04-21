@@ -1,20 +1,31 @@
 import AuthForm from "@/components/AuthForms";
 import Image from "next/image";
 import mountains from "../../../public/register-img.jpg";
+
 export default function SignUp() {
   return (
-    <>
-    <div className="hidden sm:flex rounded-[10px] gap-7 border border-white bg-[#2C2638] bg-opacity-20 items-center justify-center max-w-4xl mx-auto p-6">
-      <Image src={mountains} alt="" className="w-sm" />
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="flex flex-col sm:flex-row bg-white rounded-lg shadow-lg overflow-hidden max-w-4xl w-full">
+        {/* Left Section with Image */}
+        <div className="hidden sm:flex sm:w-1/2 bg-gray-200">
+          <Image src={mountains} alt="Signup Illustration" className="object-cover w-full h-full" />
+        </div>
+
+        {/* Right Section with Form */}
+        <div className="w-full sm:w-1/2 p-8 flex flex-col items-center justify-center">
+          <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+            Openverse Signup
+          </h1>
+          <AuthForm />
+          <p className="mt-4 text-sm text-gray-600">
+            Already have an account?{" "}
+            <a href="/login" className="text-blue-600 hover:underline">
+              Login here
+            </a>
+          </p>
+        </div>
+      </div>
     </div>
-    <div className="w-full sm:w-md h-[400px] gap-2 flex flex-col items-center justify-center">
-      <h1 className="text-2xl font-semibold mb-4 text-center text-white">
-        Welcome To MediaSearch
-      </h1>
-      <AuthForm />
-    </div>
-    <p>Already have an account? <a href="/login">Login here</a></p>
-    </>
   );
 }
 

@@ -18,7 +18,6 @@ export default function Home() {
 
   return token ? (
     <div>
-      <h1>Welcome to your dashboard 🎉</h1>
       <div><DashBoard /></div>
     </div>
   ) : null;

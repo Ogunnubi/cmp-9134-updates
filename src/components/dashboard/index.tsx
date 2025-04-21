@@ -7,12 +7,24 @@ export default function DashBoard() {
   const [images, setImages] = useState([]);
   const [audio, setAudio] = useState([]);
   const [history, setHistory] = useState<string[]>([]);
+  const [filter, setFilter] = useState("all"); // "all", "images", "audio"
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6; // Pagination limit
+  const [userEmail, setUserEmail] = useState(""); // State for user email
 
   // Load history from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem("mediaSearchHistory");
     if (stored) {
       setHistory(JSON.parse(stored));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Simulate fetching user email after login
+    const email = localStorage.getItem("userEmail"); // Assume email is stored in localStorage
+    if (email) {
+      setUserEmail(email);
     }
   }, []);
 
@@ -24,12 +36,15 @@ export default function DashBoard() {
     setHistory(newHistory);
     localStorage.setItem("mediaSearchHistory", JSON.stringify(newHistory));
   };
+
   const handleSearch = async (query: string) => {
     const results = await searchMedia(query);
     setImages(results.images);
     setAudio(results.audio);
     updateHistory(query);
+    setCurrentPage(1); // Reset to first page on new search
   };
+
   const handleDeleteHistory = (query: string) => {
     const updated = history.filter((item) => item !== query);
     setHistory(updated);
@@ -41,19 +56,56 @@ export default function DashBoard() {
     localStorage.removeItem("mediaSearchHistory");
   };
 
+  const handleLogout = () => {
+    // Implement logout functionality
+    console.log("User logged out");
+  };
+
+  const paginatedItems = (items: any[]) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return items.slice(startIndex, startIndex + itemsPerPage);
+  };
+
+  const totalPages = (items: any[]) => Math.ceil(items.length / itemsPerPage);
+
   return (
     <main className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4 text-white">
-        Open License Media Search
-      </h1>
+      {/* Top Navigation */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-white">Welcome To Openverse Search</h1>
+        <div className="flex items-center gap-4">
+          <span className="text-white">{userEmail || "Loading..."}</span>
+          <button
+            onClick={handleLogout}
+            className="text-md text-[#02F7FD] underline cursor-pointer"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+
+      {/* Search Bar */}
       <SearchBar onSearch={handleSearch} />
+
+      {/* Filter Tabs */}
+      <div className="flex gap-4 mt-4 border-b border-gray-300">
+        {["all", "images", "audio"].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setFilter(tab)}
+            className={`px-4 py-2 ${
+              filter === tab ? "border-b-2 border-[#02F7FD] text-[#02F7FD]" : "text-white"
+            }`}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
 
       {/* Search History */}
       {history.length > 0 && (
         <div className="mt-6">
-          <h2 className="text-lg font-semibold mb-2 text-white">
-            Search History
-          </h2>
+          <h2 className="text-lg font-semibold mb-2 text-white">Search History</h2>
           <div className="flex flex-wrap gap-2">
             {history.map((term) => (
               <div
@@ -79,57 +131,79 @@ export default function DashBoard() {
         </div>
       )}
 
+      {/* Results */}
       <div className="mt-6">
-        <h2 className="text-xl font-bold mb-2 text-white">Images</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 border rounded shadow hover:shadow-lg transition bg-[#2E3E54] p-4">
-          {images.length > 0 ? (
-            images.map((media: any) => (
-              <div
-                key={media.id}
-                className="border border-[white] rounded shadow hover:shadow-lg transition"
-              >
-                <img
-                  src={media.thumbnail}
-                  alt={media.title}
-                  className="w-full h-32 sm:h-48 object-cover"
-                />
-                <div className="p-2">
-                  <p className="font-semibold text-white text-sm sm:text-base">
-                    {media.title || "Untitled"}
-                  </p>
-                  <a
-                    href={media.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs sm:text-sm underline text-white"
+        {filter !== "audio" && (
+          <>
+            <h2 className="text-xl font-bold mb-2 text-white">Images</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {paginatedItems(images).length > 0 ? (
+                paginatedItems(images).map((media: any) => (
+                  <div
+                    key={media.id}
+                    className="border border-[white] rounded shadow hover:shadow-lg transition"
                   >
-                    View Source
-                  </a>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-white">No images found.</p>
-          )}
-        </div>
+                    <img
+                      src={media.thumbnail}
+                      alt={media.title}
+                      className="w-full h-32 sm:h-48 object-cover"
+                    />
+                    <div className="p-2">
+                      <p className="font-semibold text-white text-sm sm:text-base">
+                        {media.title || "Untitled"}
+                      </p>
+                      <a
+                        href={media.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs sm:text-sm underline text-white"
+                      >
+                        View Source
+                      </a>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-white">No images found.</p>
+              )}
+            </div>
+          </>
+        )}
+
+        {filter !== "images" && (
+          <>
+            <h2 className="text-xl font-bold mb-2 text-white">Audio</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {paginatedItems(audio).length > 0 ? (
+                paginatedItems(audio).map((track: any) => (
+                  <div key={track.id} className="text-center">
+                    <p className="font-medium text-white text-sm sm:text-base">
+                      {track.title}
+                    </p>
+                    <audio controls src={track.url} className="w-full"></audio>
+                  </div>
+                ))
+              ) : (
+                <p className="text-white">No audio found.</p>
+              )}
+            </div>
+          </>
+        )}
       </div>
 
-      <div className="mt-6">
-        <h2 className="text-xl font-bold mb-2 text-white">Audio</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 border rounded shadow hover:shadow-lg transition align-center p-4 bg-[#2E3E54]">
-          {audio.length > 0 ? (
-            audio.map((track: any) => (
-              <div key={track.id} className="text-center">
-                <p className="font-medium text-white text-sm sm:text-base">
-                  {track.title}
-                </p>
-                <audio controls src={track.url} className="w-full"></audio>
-              </div>
-            ))
-          ) : (
-            <p className="text-white">No audio found.</p>
-          )}
-        </div>
+      {/* Pagination */}
+      <div className="flex justify-center mt-6">
+        {Array.from({ length: totalPages(filter === "images" ? images : audio) }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentPage(i + 1)}
+            className={`px-3 py-1 mx-1 ${
+              currentPage === i + 1 ? "bg-[#02F7FD] text-white" : "bg-gray-300"
+            } rounded`}
+          >
+            {i + 1}
+          </button>
+        ))}
       </div>
     </main>
   );

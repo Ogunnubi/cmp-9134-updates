@@ -1,13 +1,17 @@
 .logo-container {
   display: flex;
-  justify-content: left;
+  justify-content: center;
   align-items: center;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .logo-image {
-  width: 150px;
-  height: auto;
-  border-radius: 8px;
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -15,11 +19,11 @@
   .logo-image {
     width: 50px;
   }
-  .background{
+  .background {
     margin: 0 5px;
   }
 }
 
-body{
-    background: #5B566A;
+body {
+  background: #5B566A;
 }
